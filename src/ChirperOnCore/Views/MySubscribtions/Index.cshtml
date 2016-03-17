@@ -1,0 +1,55 @@
+﻿@model ChirperOnCore.Models.MySubscribtionList
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+@if (!@Model.Subscriptions.Count.Equals(0))
+{
+    <table class="table">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                E-mail
+            </th>
+            <th>
+                Registration date
+            </th>
+            <th>
+                Posts
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var user in @Model.Subscriptions)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(user.Name, "Index", new { controller = "Manage", userId = user.Id })
+                </td>
+                <td>
+                    @user.Email
+                </td>
+                <td>
+                    @user.RegistrationDateTime
+                </td>
+                <td>
+                    @Html.ActionLink(user.Posts.Count.ToString(), "Index", new {controller = "Posts", userId = user.Id})
+                </td>
+                <td>
+                    <input type="button" value="Unsubscribe"
+                           onclick='location.href="@Url.Action("Unsubscribe", new {controller = "Manage", userId = user.Id})"' />
+                </td>
+
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <h1>You don't have any subscriptions</h1>
+}

@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<ChirperOnCore.Models.Post>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@if (@ViewBag.AreTheyMine)
+{
+
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+@foreach (var post in Model)
+{
+
+    <div class="well well-sm">
+        <div class="post">
+            <a href="@Url.Action("Index", "Manage", new {id = post.Author.Id})"><h4>@post.Author.Name</h4></a>
+            @if (post.RepostFrom != null)
+            {
+                <span>
+                    Repost from
+                    <a href="@Url.Action("Details", "Posts", new {id = post.RepostFrom.Id})"><h4>@post.RepostFrom.Author.Name</h4></a>
+                </span>
+            }
+            <p>@post.CreateDateTime</p><br />
+            <p>@post.Text</p><br />
+            @if (@post.Author.Id.Equals(User.Identity.GetUserId()))
+            {
+                <button onclick="javascript:window.location = ('@Url.Action("Edit", "Posts", new {id = post.Id})')" class="btn btn-info">Edit</button>
+                <button onclick="javascript:window.location = ('@Url.Action("Delete", "Posts", new {id = post.Id})')" class="btn btn-danger">Delete</button>
+            }
+            else
+            {
+                <button onclick="javascript:window.location = ('@Url.Action("Repost", "Posts", new {id = post.Id})')" class="btn btn-green">Repost</button>
+            }
+
+        </div>
+    </div>
+}

@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNet.Identity
+@using ChirperOnCore.Models
+
+@model Feed
+<div class="row">
+    <div class="col-md-offset-3 col-md-6">
+        @using (Html.BeginForm("Create", "Posts", FormMethod.Post))
+        {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="text">Chirp something...</label>
+                    <textarea name="text" class="form-control" rows="3" style="resize: none"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="Submit" class="btn btn-info pull-center">Chirp!</button>
+                </div>
+            }   
+    </div>
+</div>
+
+
+
+@foreach (var post in Model.Posts)
+{
+
+    <div class="well well-sm">
+        <div class="post">
+            <a href="@Url.Action("Index", "Manage", new {id = post.Author.Id})"><h4>@post.Author.Name</h4></a>
+            @if (post.RepostFrom != null)
+            {
+                <span>
+                    Repost from
+                    <a href="@Url.Action("Details", "Posts", new {id = post.RepostFrom.Id})"><h4>@post.RepostFrom.Author.Name</h4></a>
+                </span>
+            }
+            <p>@post.CreateDateTime</p><br />
+            <p>@post.Text</p><br />
+            @if (@post.Author.Name.Equals(User.Identity.Name))
+            {
+                <button onclick="javascript:window.location = ('@Url.Action("Edit", "Posts", new {id = post.Id})')" class="btn btn-info">Edit</button>
+                <button onclick="javascript:window.location = ('@Url.Action("Delete", "Posts", new {id = post.Id})')" class="btn btn-danger">Delete</button>
+            }
+            else
+            {
+                <button onclick="javascript:window.location = ('@Url.Action("Repost", "Posts", new {id = post.Id})')" class="btn btn-green">Repost</button>
+            }
+
+        </div>
+    </div>
+}

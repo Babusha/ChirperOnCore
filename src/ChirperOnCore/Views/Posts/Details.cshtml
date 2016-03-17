@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNet.Identity
+@model ChirperOnCore.Models.Post
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Post</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Author.Name)
+        </dt>
+        <dd>
+            @Model.Author.Name
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+
+        <dt>
+            Creation date:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDateTime)
+        </dd>
+
+        @if (Model.LastEditedDateTime.HasValue)
+        {
+            <dt>
+                Last edited:
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.LastEditedDateTime)
+            </dd>
+        }
+
+        @if (Model.RepostFrom != null)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.RepostFrom.Author)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RepostFrom.Author)
+            </dd>
+        }
+    </dl>
+</div>
+<p>
+    @if (Model.Author.Id.Equals(User.Identity.GetUserId()))
+    {
+        <a>@Html.ActionLink("Edit", "Edit", new {id = Model.Id}) |</a>
+        <a>@Html.ActionLink("Delete", "Delete", new { id = Model.Id }) |</a>
+    }
+    else
+    {
+        <a>@Html.ActionLink("Repost", "Repost", new { id = Model.Id }) |</a>
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>
