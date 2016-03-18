@@ -15,7 +15,7 @@ namespace ChirperOnCore.Controllers
         // GET: MySubscribtions
         public ActionResult Index()
         {
-            return View(new MySubscribtionList(db.Users.Find(User.Identity.Name)));
+            return View(new MySubscribtionList(db.Users.FirstOrDefault(user => user.UserName.Equals(User.Identity.Name))));
         }
     }
 }

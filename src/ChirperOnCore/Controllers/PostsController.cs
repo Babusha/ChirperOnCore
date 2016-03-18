@@ -18,13 +18,13 @@ namespace ChirperOnCore.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Posts
-        public ActionResult Index(string userId)
+        public ActionResult Index(string userName)
         {
-            if (String.IsNullOrEmpty(userId))
-                userId = User.Identity.Name;
+            if (String.IsNullOrEmpty(userName))
+                userName = User.Identity.Name;
 
-           ViewBag.AreTheyMine = userId == User.Identity.Name;
-           return View(db.Posts.Where(post => post.Author.Id.Equals(userId)).ToList());
+           ViewBag.AreTheyMine = userName == User.Identity.Name;
+           return View(db.Posts.Where(post => post.Author.UserName.Equals(userName)).ToList());
 
         }
 
@@ -35,7 +35,7 @@ namespace ChirperOnCore.Controllers
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(id));
             if (post == null)
             {
                 return HttpNotFound();
@@ -59,13 +59,16 @@ namespace ChirperOnCore.Controllers
             if (ModelState.IsValid)
             {
                 post.CreateDateTime = DateTime.Now;
-                post.Author = db.Users.Find(User.Identity.Name);
-                db.Posts.Add(post);
+                post.Author = db.Users.FirstOrDefault(user => user.UserName.Equals(User.Identity.Name));
+                db.Posts.Add(post).State = EntityState.Added;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Feed");
             }
 
-            return View(post);
+            else
+            {
+                throw new InvalidProgramException("");
+            }
         }
 
         public ActionResult Repost(int? id)
@@ -74,12 +77,12 @@ namespace ChirperOnCore.Controllers
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
-            var post = db.Posts.Find(id);
+            var post = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(id));
             if (post == null)
             {
                 return HttpNotFound();
             }
-            if (post.Author.Id.Equals(User.Identity.Name))
+            if (post.Author.UserName.Equals(User.Identity.Name))
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
@@ -88,7 +91,7 @@ namespace ChirperOnCore.Controllers
                 var rePost = new Post()
                 {
                     RepostFrom = post,
-                    Author = db.Users.Find(User.Identity.Name),
+                    Author = db.Users.FirstOrDefault(user => user.UserName.Equals(User.Identity.Name)),
                     Text = post.Text,
                     CreateDateTime = DateTime.Now
                 };
@@ -107,12 +110,12 @@ namespace ChirperOnCore.Controllers
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(id));
             if (post == null)
             {
                 return HttpNotFound();
             }
-            if (!post.Author.Id.Equals(User.Identity.Name))
+            if (!post.Author.UserName.Equals(User.Identity.Name))
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
@@ -126,12 +129,12 @@ namespace ChirperOnCore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind("Id,Text")] Post post)
         {
-            var editPost = db.Posts.Find(post.Id);
+            var editPost = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(post.Id));
             if (editPost == null)
             {
                 return HttpNotFound();
             }
-            if (!editPost.Author.Id.Equals(User.Identity.Name))
+            if (!editPost.Author.UserName.Equals(User.Identity.Name))
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
@@ -153,7 +156,7 @@ namespace ChirperOnCore.Controllers
             {
                 return new HttpStatusCodeResult((int) HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(id));
             if (post == null)
             {
                 return HttpNotFound();
@@ -166,7 +169,7 @@ namespace ChirperOnCore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Post deletePost = db.Posts.Find(id);
+            Post deletePost = db.Posts.FirstOrDefault(postQuery => postQuery.Id.Equals(id));
 
             db.Posts.Where(post => post.RepostFrom.Id.Equals(id)).ToList().ForEach(rePost => db.Posts.Remove(rePost));
             db.Posts.Remove(deletePost);

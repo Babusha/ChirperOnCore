@@ -15,8 +15,9 @@ namespace ChirperOnCore.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         // GET: Feed
         public ActionResult Index()
-        {
-            var feed = new Feed(db.Users.Find(User.Identity.Name));
+        { 
+            var user = db.Users.FirstOrDefault(userQuery => userQuery.UserName.Equals(User.Identity.Name));
+            var feed = new Feed(user);
             return View(feed);
         }
     }

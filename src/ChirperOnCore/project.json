@@ -33,7 +33,11 @@
   },
 
   "frameworks": {
-    "dnx451": { },
+    "dnx451": {
+      "dependencies": {
+        "Gillie.Common": "1.0.0-*"
+      }
+    },
     "dnxcore50": { }
   },
 

@@ -29,7 +29,7 @@
         {
             <tr>
                 <td>
-                    @Html.ActionLink(user.Name, "Index", new { controller = "Manage", userId = user.Id })
+                    @Html.ActionLink(user.UserName, "Index", new { controller = "Manage", userName = user.Id })
                 </td>
                 <td>
                     @user.Email
@@ -38,11 +38,11 @@
                     @user.RegistrationDateTime
                 </td>
                 <td>
-                    @Html.ActionLink(user.Posts.Count.ToString(), "Index", new {controller = "Posts", userId = user.Id})
+                    @Html.ActionLink(user.Posts.Count.ToString(), "Index", new {controller = "Posts", userName = user.Id})
                 </td>
                 <td>
                     <input type="button" value="Unsubscribe"
-                           onclick='location.href="@Url.Action("Unsubscribe", new {controller = "Manage", userId = user.Id})"' />
+                           onclick='location.href="@Url.Action("Unsubscribe", new {controller = "Manage", userName = user.Id})"' />
                 </td>
 
             </tr>
